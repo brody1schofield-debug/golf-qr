@@ -101,7 +101,7 @@ fetchSheet("Course_Settings").then(data => {
   document.getElementById("course-status").textContent = row[1]?.v ?? "—";
   document.getElementById("front-pace").textContent = `Front 9: ${row[2]?.v ?? "—"}`;
   document.getElementById("back-pace").textContent = `Back 9: ${row[3]?.v ?? "—"}`;
-  document.getElementById("last-updated").textContent = `Last updated: ${row[4]?.v ?? "—"}`;
+  document.getElementById("last-updated").textContent = `Last updated: ${row[4]?.f ?? "—"}`;
 });
 
 /* ================= COURSE NOTICES ================= */
@@ -164,6 +164,7 @@ fetchSheet("Pin_Placements").then(data => {
 
 </body>
 </html>
+
 
 
 
