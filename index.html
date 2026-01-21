@@ -26,30 +26,35 @@
     }
 
    .status {
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 6px 14px;
-  border-radius: 999px;
-  display: inline-block;
+  border-radius: 9999px;
+  font-weight: 600;
   font-size: 14px;
+  width: fit-content;
+  max-width: max-content;
 }
 
 /* OPEN */
 .status-open {
-  background: #e6f4ea;
+  background-color: #e6f4ea;
   color: #137333;
 }
 
 /* CLOSED */
 .status-closed {
-  background: #fce8e6;
+  background-color: #fce8e6;
   color: #a50e0e;
 }
 
 /* DELAY / FROST */
 .status-delay {
-  background: #fef7e0;
+  background-color: #fef7e0;
   color: #b06000;
 }
+
 
 
 
@@ -205,6 +210,7 @@ setInterval(() => {
 
 </body>
 </html>
+
 
 
 
