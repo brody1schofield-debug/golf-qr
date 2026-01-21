@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Golf Course Info</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 16px;
+      background: #f7f7f7;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+    h2 {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+    .status {
+      font-weight: bold;
+      color: green;
+    }
+    ul {
+      padding-left: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>Moncton Golf Club</h1>
+    <div>📅 Today</div>
+    <div class="status">STATUS: CART PATH ONLY</div>
+  </div>
+
+
+  <div id="pin-placements"></div>
+
+  <div class="card">
+    <h2>Course Notices</h2>
+    <ul>
+      <li>Beer cart front 9 only</li>
+      <li>Hole 5 temporary green</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Pace of Play</h2>
+    <div>Front 9: 2:05</div>
+    <div>Back 9: 2:10</div>
+  </div>
+
+  <div class="card">
+    <small>Last updated: Today</small>
+  </div>
+
+<script>
+const SHEET_ID = "1_Bd5eS7UCABFjMFaDznX5kbEzEIzB7umFegd9m1IKos";
+const PIN_SHEET = "Pin_Placements";
+
+const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${PIN_SHEET}`;
+
+fetch(url)
+  .then(res => res.text())
+  .then(text => {
+    const json = JSON.parse(text.substring(47).slice(0, -2));
+    const rows = json.table.rows;
+
+    const container = document.getElementById("pin-placements");
+    container.className = "card";
+    container.innerHTML = "<h2>Today’s Pin Placements</h2>";
+
+    rows.forEach(r => {
+      const hole = r.c[0]?.v ?? "";
+      const position = r.c[1]?.v ?? "";
+      const detail = r.c[2]?.v ?? "";
+
+      if (!hole && !position) return;
+
+      container.innerHTML += `<div>Hole ${hole} – ${position} ${detail}</div>`;
+    });
+  })
+  .catch(err => {
+    console.error("Sheet fetch error:", err);
+  });
+</script>
+
+</body>
+</html>
+
+
+
