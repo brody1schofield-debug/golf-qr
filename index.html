@@ -123,10 +123,11 @@ fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&s
     list.innerHTML = "";
 
     rows.forEach(r => {
-      const active = r.c[0]?.v;
-      const message = r.c[1]?.v;
+     const active = String(r.c[0]?.v ?? "").toLowerCase();
+     const message = r.c[1]?.v ?? "";
 
-      if (!(active === true || active === "TRUE" || active === 1) || !message) return;
+     if (!(active === "true" || active === "1") || !message) return;
+
 
       const li = document.createElement("li");
       li.textContent = message;
@@ -142,6 +143,7 @@ fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&s
 
 </body>
 </html>
+
 
 
 
