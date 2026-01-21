@@ -25,7 +25,7 @@
       margin: 0 0 8px 0;
     }
 
-   .status {
+  .status {
   display: inline-flex;
   align-items: center;
   padding: 6px 14px;
@@ -49,6 +49,7 @@
   background: #fef7e0;
   color: #b06000;
 }
+
 
 
 
@@ -120,6 +121,8 @@ fetchSheet("Course_Settings").then(data => {
   document.getElementById("course-name").textContent = row[0]?.v ?? "—";
 const statusText = row[1]?.v ?? "—";
 const statusEl = document.getElementById("course-status");
+statusEl.textContent = row[1]?.v ?? "—";
+
 
 statusEl.textContent = statusText;
 
@@ -209,6 +212,7 @@ setInterval(() => {
 
 </body>
 </html>
+
 
 
 
