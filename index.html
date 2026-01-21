@@ -25,14 +25,29 @@
       margin: 0 0 8px 0;
     }
 
-    .status {
-      font-weight: 600;
-      padding: 6px 12px;
-      border-radius: 20px;
-      display: inline-block;
-      background: #e6f4ea;
-      color: #137333;
-    }
+   .status {
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 999px;
+  display: inline-block;
+  font-size: 14px;
+}
+
+.status-open {
+  background: #e6f4ea;
+  color: #137333;
+}
+
+.status-delay {
+  background: #fef7e0;
+  color: #a05a00;
+}
+
+.status-closed {
+  background: #fdecea;
+  color: #b3261e;
+}
+
 
     ul {
       padding-left: 18px;
@@ -161,9 +176,15 @@ fetchSheet("Pin_Placements").then(data => {
   }
 });
 </script>
+  // Auto refresh every 2 minutes
+setInterval(() => {
+  location.reload();
+}, 120000);
+
 
 </body>
 </html>
+
 
 
 
