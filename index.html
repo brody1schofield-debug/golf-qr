@@ -113,7 +113,24 @@ fetchSheet("Course_Settings").then(data => {
   const row = data.table.rows[0].c;
 
   document.getElementById("course-name").textContent = row[0]?.v ?? "—";
-  document.getElementById("course-status").textContent = row[1]?.v ?? "—";
+ const statusText = row[1]?.v ?? "—";
+const statusEl = document.getElementById("course-status");
+
+statusEl.textContent = statusText;
+statusEl.className = "status";
+
+// SAFE lowercase conversion
+const s = String(statusText).toLowerCase();
+
+if (s.includes("closed")) {
+  statusEl.classList.add("status-closed");
+} else if (s.includes("delay") || s.includes("frost")) {
+  statusEl.classList.add("status-delay");
+} else {
+  statusEl.classList.add("status-open");
+}
+
+
   document.getElementById("front-pace").textContent = `Front 9: ${row[2]?.v ?? "—"}`;
   document.getElementById("back-pace").textContent = `Back 9: ${row[3]?.v ?? "—"}`;
   document.getElementById("last-updated").textContent = `Last updated: ${row[4]?.f ?? "—"}`;
@@ -184,6 +201,7 @@ setInterval(() => {
 
 </body>
 </html>
+
 
 
 
