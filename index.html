@@ -77,20 +77,25 @@
 const SHEET_ID = "1_Bd5eS7UCABFjMFaDznX5kbEzEIzB7umFegd9m1IKos";
 
 // ---------- COURSE SETTINGS ----------
+  console.log("FETCHING:", `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Course_Settings`);
+
 fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Course_Settings`)
   .then(res => res.text())
   .then(text => {
     const json = JSON.parse(text.substring(47).slice(0, -2));
     const row = json.table.rows[0].c;
 
-    document.getElementById("course-name").textContent = row[0]?.v ?? "";
-    document.getElementById("course-status").textContent = `STATUS: ${row[1]?.v ?? ""}`;
-    document.getElementById("front-pace").textContent = `Front 9: ${row[3]?.v ?? ""}`;
-    document.getElementById("back-pace").textContent = `Back 9: ${row[5]?.v ?? ""}`;
-    document.getElementById("last-updated").textContent = `Last updated: ${row[6]?.v ?? ""}`;
+   document.getElementById("course-name").textContent = row[0]?.v ?? "";
+document.getElementById("course-status").textContent = `STATUS: ${row[1]?.v ?? ""}`;
+document.getElementById("front-pace").textContent = `Front 9: ${row[2]?.v ?? ""}`;
+document.getElementById("back-pace").textContent = `Back 9: ${row[3]?.v ?? ""}`;
+document.getElementById("last-updated").textContent = `Last updated: ${row[4]?.v ?? ""}`;
+
   });
 
 // ---------- PIN PLACEMENTS ----------
+  console.log("FETCHING:", `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Course_Settings`);
+
 fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Pin_Placements`)
   .then(res => res.text())
   .then(text => {
@@ -112,6 +117,8 @@ fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&s
   });
 
 // ---------- COURSE NOTICES ----------
+  console.log("FETCHING:", `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Course_Settings`);
+
 <script>
 fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Course_Notice`)
   .then(res => res.text())
@@ -143,6 +150,7 @@ fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&s
 
 </body>
 </html>
+
 
 
 
