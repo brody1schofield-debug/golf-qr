@@ -2,154 +2,169 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <title>Golf Course Status</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Golf Course Info</title>
 
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f6f7f8;
       margin: 0;
       padding: 16px;
-      background: #f4f4f4;
     }
+
     .card {
       background: #ffffff;
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 16px;
-      margin-bottom: 14px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
-    h1 {
-      margin: 0 0 6px 0;
-      font-size: 24px;
+
+    h1, h2 {
+      margin: 0 0 8px 0;
     }
-    h2 {
-      margin: 0 0 10px 0;
-      font-size: 18px;
-    }
+
     .status {
-      font-weight: bold;
-      color: green;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 20px;
+      display: inline-block;
+      background: #e6f4ea;
+      color: #137333;
     }
+
     ul {
       padding-left: 18px;
-      margin: 0;
     }
-    small {
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    .muted {
       color: #666;
+      font-size: 14px;
     }
   </style>
 </head>
+
 <body>
 
   <!-- COURSE HEADER -->
   <div class="card">
-    <h1 id="course-name">Loading...</h1>
-    <div>📅 Today</div>
-    <div class="status" id="course-status"></div>
-  </div>
-
-  <!-- PIN PLACEMENTS -->
-  <div id="pin-placements" class="card">
-    <h2>Today’s Pin Placements</h2>
-    <div>Loading...</div>
+    <h1 id="course-name">Loading…</h1>
+    <div id="course-status" class="status">Loading…</div>
+    <p id="front-pace">Front 9: —</p>
+    <p id="back-pace">Back 9: —</p>
+    <p id="last-updated" class="muted">Last updated: —</p>
   </div>
 
   <!-- COURSE NOTICES -->
-  <div id="course-notices" class="card">
+  <div class="card">
     <h2>Course Notices</h2>
-    <ul></ul>
+    <ul id="course-notices">
+      <li>Loading notices…</li>
+    </ul>
   </div>
 
-  <!-- PACE OF PLAY -->
+  <!-- PIN PLACEMENTS -->
   <div class="card">
-    <h2>Pace of Play</h2>
-    <div id="front-pace"></div>
-    <div id="back-pace"></div>
-  </div>
-
-  <!-- LAST UPDATED -->
-  <div class="card">
-    <small id="last-updated"></small>
+    <h2>Today’s Pin Placements</h2>
+    <ul id="pin-placements">
+      <li>Loading pin placements…</li>
+    </ul>
   </div>
 
 <script>
-const SHEET_ID = "1_Bd5eS7UCABFjMFaDznX5kbEzEIzB7umFegd9m1IKos";
+const SHEET_ID = "1_Bd5eS7UCABFjMFaDznX5kbEzElzB7umFegd9m1IKos";
 
-// ---------- COURSE SETTINGS ----------
-  console.log("FETCHING:", `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Course_Settings`);
-
-fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Course_Settings`)
-  .then(res => res.text())
-  .then(text => {
-    const json = JSON.parse(text.substring(47).slice(0, -2));
-    const row = json.table.rows[0].c;
-
-   document.getElementById("course-name").textContent = row[0]?.v ?? "";
-document.getElementById("course-status").textContent = `STATUS: ${row[1]?.v ?? ""}`;
-document.getElementById("front-pace").textContent = `Front 9: ${row[2]?.v ?? ""}`;
-document.getElementById("back-pace").textContent = `Back 9: ${row[3]?.v ?? ""}`;
-document.getElementById("last-updated").textContent = `Last updated: ${row[4]?.v ?? ""}`;
-
-  });
-
-// ---------- PIN PLACEMENTS ----------
-  console.log("FETCHING:", `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Course_Settings`);
-
-fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Pin_Placements`)
-  .then(res => res.text())
-  .then(text => {
-    const json = JSON.parse(text.substring(47).slice(0, -2));
-    const rows = json.table.rows;
-
-    const container = document.getElementById("pin-placements");
-    container.innerHTML = "<h2>Today’s Pin Placements</h2>";
-
-    rows.forEach(r => {
-      const hole = r.c[0]?.v;
-      const position = r.c[1]?.v;
-      const detail = r.c[2]?.v ?? "";
-
-      if (!hole || !position) return;
-
-      container.innerHTML += `<div>Hole ${hole} – ${position} ${detail}</div>`;
+function fetchSheet(sheetName) {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+  return fetch(url)
+    .then(res => res.text())
+    .then(text => JSON.parse(text.substring(47).slice(0, -2)))
+    .catch(err => {
+      console.error(`Error loading ${sheetName}`, err);
+      return null;
     });
-  });
+}
 
-// ---------- COURSE NOTICES ----------
-  console.log("FETCHING:", `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Course_Settings`);
+/* ================= COURSE SETTINGS ================= */
 
-<script>
-fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Course_Notice`)
-  .then(res => res.text())
-  .then(text => {
-    const json = JSON.parse(text.substring(47).slice(0, -2));
-    const rows = json.table.rows;
+fetchSheet("Course_Settings").then(data => {
+  if (!data || !data.table.rows.length) return;
 
-    const list = document.querySelector("#course-notices ul");
-    list.innerHTML = "";
+  const row = data.table.rows[0].c;
 
-    rows.forEach(r => {
-     const active = String(r.c[0]?.v ?? "").toLowerCase();
-     const message = r.c[1]?.v ?? "";
+  document.getElementById("course-name").textContent = row[0]?.v ?? "—";
+  document.getElementById("course-status").textContent = row[1]?.v ?? "—";
+  document.getElementById("front-pace").textContent = `Front 9: ${row[2]?.v ?? "—"}`;
+  document.getElementById("back-pace").textContent = `Back 9: ${row[3]?.v ?? "—"}`;
+  document.getElementById("last-updated").textContent = `Last updated: ${row[4]?.v ?? "—"}`;
+});
 
-     if (!(active === "true" || active === "1") || !message) return;
+/* ================= COURSE NOTICES ================= */
 
+fetchSheet("Course_Notice").then(data => {
+  const list = document.getElementById("course-notices");
+  list.innerHTML = "";
 
-      const li = document.createElement("li");
-      li.textContent = message;
-      list.appendChild(li);
-    });
+  if (!data) {
+    list.innerHTML = "<li>Error loading notices</li>";
+    return;
+  }
 
-    if (!list.children.length) {
-      list.innerHTML = "<li>No course notices today</li>";
+  data.table.rows.forEach(r => {
+    const active = r.c[0]?.v;
+    const message = r.c[1]?.v;
+
+    if (active === true || active === "TRUE" || active === 1) {
+      if (message) {
+        const li = document.createElement("li");
+        li.textContent = message;
+        list.appendChild(li);
+      }
     }
   });
-</
 
+  if (!list.children.length) {
+    list.innerHTML = "<li>No active notices today</li>";
+  }
+});
+
+/* ================= PIN PLACEMENTS ================= */
+
+fetchSheet("Pin_Placements").then(data => {
+  const list = document.getElementById("pin-placements");
+  list.innerHTML = "";
+
+  if (!data) {
+    list.innerHTML = "<li>Error loading pin placements</li>";
+    return;
+  }
+
+  data.table.rows.forEach(r => {
+    const hole = r.c[0]?.v;
+    const position = r.c[1]?.v;
+    const detail = r.c[2]?.v;
+
+    if (!hole || !position) return;
+
+    const li = document.createElement("li");
+    li.textContent = `Hole ${hole}: ${position}${detail ? " – " + detail : ""}`;
+    list.appendChild(li);
+  });
+
+  if (!list.children.length) {
+    list.innerHTML = "<li>No pin placements posted</li>";
+  }
+});
+</script>
 
 </body>
 </html>
+
 
 
 
