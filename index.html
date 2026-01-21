@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Golf Course Info</title>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -31,45 +32,82 @@
     }
     ul {
       padding-left: 18px;
+      margin: 0;
+    }
+    li {
+      margin-bottom: 6px;
     }
   </style>
 </head>
+
 <body>
 
+  <!-- COURSE HEADER -->
   <div class="card">
-    <h1>Moncton Golf Club</h1>
+    <h1 id="course-name"></h1>
     <div>📅 Today</div>
-    <div class="status">STATUS: CART PATH ONLY</div>
+    <div id="status" class="status"></div>
   </div>
 
-
+  <!-- PIN PLACEMENTS -->
   <div id="pin-placements"></div>
 
+  <!-- COURSE NOTICES -->
   <div class="card">
     <h2>Course Notices</h2>
-    <ul>
-      <li>Beer cart front 9 only</li>
-      <li>Hole 5 temporary green</li>
-    </ul>
+    <ul id="course-notices"></ul>
   </div>
 
+  <!-- PACE OF PLAY -->
   <div class="card">
     <h2>Pace of Play</h2>
-    <div>Front 9: 2:05</div>
-    <div>Back 9: 2:10</div>
+    <div id="pace-front"></div>
+    <div id="pace-back"></div>
   </div>
 
+  <!-- LAST UPDATED -->
   <div class="card">
-    <small>Last updated: Today</small>
+    <small id="last-updated"></small>
   </div>
 
 <script>
+/* ===============================
+   CONFIG
+================================ */
 const SHEET_ID = "1_Bd5eS7UCABFjMFaDznX5kbEzEIzB7umFegd9m1IKos";
-const PIN_SHEET = "Pin_Placements";
 
-const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${PIN_SHEET}`;
+/* ===============================
+   COURSE SETTINGS
+   Sheet: Course_Settings
+   Columns:
+   A Course Name
+   B Status
+   C Front 9 Pace
+   D Back 9 Pace
+   E Last Updated
+================================ */
+fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Course_Settings`)
+  .then(res => res.text())
+  .then(text => {
+    const json = JSON.parse(text.substring(47).slice(0, -2));
+    const row = json.table.rows[0].c;
 
-fetch(url)
+    document.getElementById("course-name").textContent = row[0]?.v || "";
+    document.getElementById("status").textContent = `STATUS: ${row[1]?.v || ""}`;
+    document.getElementById("pace-front").textContent = `Front 9: ${row[2]?.v || ""}`;
+    document.getElementById("pace-back").textContent = `Back 9: ${row[3]?.v || ""}`;
+    document.getElementById("last-updated").textContent = `Last updated: ${row[4]?.v || ""}`;
+  });
+
+/* ===============================
+   PIN PLACEMENTS
+   Sheet: Pin_Placements
+   Columns:
+   A Hole
+   B Position
+   C Detail (optional)
+================================ */
+fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Pin_Placements`)
   .then(res => res.text())
   .then(text => {
     const json = JSON.parse(text.substring(47).slice(0, -2));
@@ -80,18 +118,43 @@ fetch(url)
     container.innerHTML = "<h2>Today’s Pin Placements</h2>";
 
     rows.forEach(r => {
-      const hole = r.c[0]?.v ?? "";
-      const position = r.c[1]?.v ?? "";
-      const detail = r.c[2]?.v ?? "";
+      const hole = r.c[0]?.v;
+      const position = r.c[1]?.v;
+      const detail = r.c[2]?.v || "";
 
-      if (!hole && !position) return;
+      if (!hole || !position) return;
 
       container.innerHTML += `<div>Hole ${hole} – ${position} ${detail}</div>`;
     });
-  })
-  .catch(err => {
-    console.error("Sheet fetch error:", err);
   });
+
+/* ===============================
+   COURSE NOTICES
+   Sheet: Course_Notice
+   Columns:
+   A Message
+   B Priority (optional)
+   C Active (TRUE/FALSE)
+================================ */
+fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Course_Notice`)
+  .then(res => res.text())
+  .then(text => {
+    const json = JSON.parse(text.substring(47).slice(0, -2));
+    const rows = json.table.rows;
+
+    const list = document.getElementById("course-notices");
+    list.innerHTML = "";
+
+    rows.forEach(r => {
+      const message = r.c[0]?.v;
+      const active = r.c[2]?.v;
+
+      if (active === true && message) {
+        list.innerHTML += `<li>${message}</li>`;
+      }
+    });
+  });
+
 </script>
 
 </body>
