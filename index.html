@@ -126,7 +126,8 @@ fetchSheet("Course_Settings").then(data => {
 const statusEl = document.getElementById("course-status");
 
 statusEl.textContent = statusText;
-statusEl.className = "status";
+statusEl.className = "";
+statusEl.classList.add("status");
 
 // SAFE lowercase conversion
 const s = String(statusText).toLowerCase();
@@ -210,6 +211,7 @@ setInterval(() => {
 
 </body>
 </html>
+
 
 
 
